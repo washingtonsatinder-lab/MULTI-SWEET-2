@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Multi-Sweet 产品展示二维码</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { 
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  background: #FDF8F0; 
+  display: flex; align-items: center; justify-content: center; 
+  min-height: 100vh; padding: 20px;
+}
+.card {
+  background: #fff; border-radius: 16px; padding: 40px;
+  box-shadow: 0 8px 32px rgba(44,36,22,0.12); text-align: center;
+  max-width: 400px; width: 100%;
+}
+.card .logo-area { margin-bottom: 24px; }
+.card .logo-area h1 { font-size: 24px; color: #2C2416; font-weight: 800; margin-bottom: 4px; }
+.card .logo-area p { font-size: 13px; color: #9A8E7E; letter-spacing: 0.5px; }
+#qrcode { display: flex; justify-content: center; margin: 20px 0; }
+#qrcode img { padding: 12px; background: #fff; border-radius: 12px; }
+.url { 
+  font-size: 13px; color: #6B5B45; word-break: break-all; 
+  background: #F5E6C8; padding: 10px 14px; border-radius: 8px; margin-top: 16px;
+}
+.tip { font-size: 12px; color: #9A8E7E; margin-top: 16px; }
+.print-btn {
+  margin-top: 20px; padding: 10px 24px; background: #C0781A; color: #fff;
+  border: none; border-radius: 24px; font-size: 14px; font-weight: 600; cursor: pointer;
+}
+@media print {
+  body { background: #fff; }
+  .card { box-shadow: none; }
+  .print-btn { display: none; }
+}
+</style>
+</head>
+<body>
+<div class="card">
+  <div class="logo-area">
+    <h1>Multi-Sweet</h1>
+    <p>Professional Beekeeping Equipment</p>
+  </div>
+  <div id="qrcode"></div>
+  <div class="url">https://tight-boat-45ba.washingtonsatinder.workers.dev</div>
+  <div class="tip">扫码浏览 Multi-Sweet 产品展示页</div>
+  <button class="print-btn" onclick="window.print()">🖨️ 打印二维码</button>
+</div>
+<script>
+new QRCode(document.getElementById("qrcode"), {
+  text: "https://tight-boat-45ba.washingtonsatinder.workers.dev",
+  width: 220,
+  height: 220,
+  colorDark: "#2C2416",
+  colorLight: "#FDF8F0",
+  correctLevel: QRCode.CorrectLevel.H
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,520 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<title>Multi-Sweet — Professional Beekeeping Equipment</title>
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { height: 100%; }
+body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif; background: #FDF8F0; color: #3D3226; line-height: 1.6; overflow-x: hidden; -webkit-tap-highlight-color: transparent; }
+img { max-width: 100%; display: block; }
+a { text-decoration: none; color: inherit; }
+button { border: none; background: none; cursor: pointer; font-family: inherit; }
+ul, ol { list-style: none; }
+
+:root {
+  --gold: #C0781A; --gold-light: #E8A838; --gold-pale: #F5E6C8;
+  --brown: #5C4A36; --brown-dark: #2C2416; --brown-light: #8A7560;
+  --cream: #FDF8F0; --cream-dark: #F0E8D8; --text: #3D3226;
+  --text-light: #6B5B45; --text-muted: #9A8E7E; --success: #4A7C59;
+  --shadow: 0 4px 20px rgba(44,36,22,0.10); --shadow-lg: 0 12px 40px rgba(44,36,22,0.16);
+  --shadow-gold: 0 4px 24px rgba(192,120,26,0.25); --radius: 14px; --radius-sm: 10px;
+}
+
+body::before { content: ''; position: fixed; inset: 0; z-index: -1; pointer-events: none;
+  background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="60" height="104" viewBox="0 0 60 104"><path d="M30 0 L60 17.3 V52 L30 69.3 L0 52 V17.3 Z" fill="none" stroke="rgba(192,120,26,0.04)" stroke-width="1.2"/></svg>'); background-size: 60px 104px; }
+
+@keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+@keyframes fadeInScale { from { opacity: 0; transform: scale(0.96); } to { opacity: 1; transform: scale(1); } }
+@keyframes float { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-6px); } }
+@keyframes pulse-gold { 0%,100% { box-shadow: 0 0 0 0 rgba(192,120,26,0.4); } 50% { box-shadow: 0 0 0 8px rgba(192,120,26,0); } }
+@keyframes slideFade { 0% { opacity: 0; } 20% { opacity: 1; } 25% { opacity: 1; } 45% { opacity: 0; } 100% { opacity: 0; } }
+@keyframes kenburns { 0% { transform: scale(1.1); } 50% { transform: scale(1.0); } 100% { transform: scale(1.1); } }
+
+.animate-fade { animation: fadeIn 0.6s cubic-bezier(0.22,1,0.36,1) both; }
+.animate-delay-1 { animation-delay: 0.12s; } .animate-delay-2 { animation-delay: 0.24s; }
+.animate-delay-3 { animation-delay: 0.36s; } .animate-delay-4 { animation-delay: 0.48s; }
+
+.header { position: fixed; top: 0; left: 0; right: 0; z-index: 1000; background: rgba(253,248,240,0.88); backdrop-filter: blur(14px) saturate(140%); -webkit-backdrop-filter: blur(14px) saturate(140%); border-bottom: 1px solid rgba(192,120,26,0.10); transition: all 0.3s ease; }
+.header-inner { max-width: 1200px; margin: 0 auto; padding: 0 20px; height: 60px; display: flex; align-items: center; justify-content: space-between; }
+.logo { display: flex; align-items: center; gap: 12px; cursor: pointer; }
+.logo img { height: 38px; width: auto; }
+.logo-text { font-size: 19px; font-weight: 800; color: var(--brown-dark); letter-spacing: -0.3px; }
+.logo-sub { font-size: 10px; color: var(--text-muted); font-weight: 600; text-transform: uppercase; letter-spacing: 1.2px; }
+.nav { display: flex; gap: 4px; align-items: center; }
+.nav-btn { padding: 8px 16px; font-size: 14px; font-weight: 500; color: var(--text-light); border-radius: 24px; transition: all 0.25s; position: relative; }
+.nav-btn:hover { color: var(--gold); background: rgba(192,120,26,0.06); }
+.nav-btn.active { color: var(--gold); background: rgba(192,120,26,0.10); font-weight: 600; }
+.nav-btn.active::after { content: ''; position: absolute; bottom: 3px; left: 25%; right: 25%; height: 2.5px; background: var(--gold); border-radius: 3px; }
+.menu-toggle { display: none; width: 40px; height: 40px; align-items: center; justify-content: center; border-radius: 10px; font-size: 20px; color: var(--brown-dark); }
+
+.page { display: none; min-height: 100vh; padding-top: 60px; animation: fadeIn 0.4s ease-out; }
+.page.active { display: block; }
+
+/* ===== Hero Carousel — Left Text / Right Product Showcase ===== */
+.hero-carousel { position: relative; height: 480px; overflow: hidden; background: linear-gradient(135deg, #2C2416 0%, #3D3226 50%, #4A3B2A 100%); }
+.hero-carousel .slide { position: absolute; inset: 0; opacity: 0; transition: opacity 0.8s ease-in-out; display: flex; align-items: center; justify-content: center; }
+.hero-carousel .slide.active { opacity: 1; z-index: 2; }
+.hero-carousel .slide-content { display: flex; align-items: center; max-width: 1200px; width: 100%; margin: 0 auto; padding: 0 40px; gap: 40px; height: 100%; }
+.hero-carousel .slide-text { flex: 1.1; min-width: 0; }
+.hero-carousel .slide-visual { flex: 0.9; height: 80%; display: flex; align-items: center; justify-content: center; position: relative; }
+.hero-carousel .slide-visual::before { content: ''; position: absolute; inset: -20px; background: radial-gradient(circle, rgba(232,168,56,0.08) 0%, transparent 70%); z-index: 0; pointer-events: none; }
+.hero-carousel .slide-visual img { max-width: 100%; max-height: 100%; object-fit: contain; position: relative; z-index: 1; filter: drop-shadow(0 12px 32px rgba(0,0,0,0.35)); transition: transform 0.6s cubic-bezier(0.22,1,0.36,1); }
+.hero-carousel .slide.active .slide-visual img { transform: scale(1.02); }
+.hero-carousel .slide-badge { display: inline-flex; align-items: center; gap: 6px; background: rgba(232,168,56,0.15); border: 1px solid rgba(232,168,56,0.25); color: var(--gold-light); padding: 6px 14px; border-radius: 20px; font-size: 12px; font-weight: 600; margin-bottom: 18px; letter-spacing: 0.5px; }
+.hero-carousel .slide h1 { font-size: clamp(26px, 4.5vw, 44px); font-weight: 800; line-height: 1.15; color: #fff; margin-bottom: 12px; letter-spacing: -0.3px; }
+.hero-carousel .slide h1 .accent { color: var(--gold-light); }
+.hero-carousel .slide .subtitle { font-size: 18px; font-weight: 600; color: rgba(255,255,255,0.9); margin-bottom: 8px; }
+.hero-carousel .slide p { font-size: 15px; color: rgba(255,255,255,0.75); max-width: 480px; line-height: 1.6; margin-bottom: 24px; }
+.hero-carousel .slide-actions { display: flex; gap: 12px; flex-wrap: wrap; }
+.hero-carousel .dots { position: absolute; bottom: 20px; left: 50%; transform: translateX(-50%); z-index: 3; display: flex; gap: 8px; }
+.hero-carousel .dots span { width: 8px; height: 8px; border-radius: 50%; background: rgba(255,255,255,0.35); transition: all 0.3s; cursor: pointer; }
+.hero-carousel .dots span.active { background: var(--gold-light); width: 24px; border-radius: 4px; }
+
+.btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; padding: 12px 26px; border-radius: 30px; font-size: 15px; font-weight: 600; transition: all 0.3s cubic-bezier(0.22,1,0.36,1); cursor: pointer; border: none; }
+.btn-primary { background: var(--gold); color: #fff; box-shadow: 0 4px 20px rgba(192,120,26,0.35); }
+.btn-primary:hover { background: var(--gold-light); transform: translateY(-2px); box-shadow: var(--shadow-gold); }
+.btn-outline { background: transparent; color: #fff; border: 1.5px solid rgba(255,255,255,0.35); }
+.btn-outline:hover { background: rgba(255,255,255,0.08); border-color: rgba(255,255,255,0.55); transform: translateY(-2px); }
+
+.section { max-width: 1200px; margin: 0 auto; padding: 56px 24px; }
+.section-header { text-align: center; margin-bottom: 40px; }
+.section-header .badge { display: inline-block; padding: 5px 14px; border-radius: 14px; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 14px; background: var(--gold-pale); color: var(--gold); }
+.section-header h2 { font-size: 30px; font-weight: 800; color: var(--brown-dark); margin-bottom: 10px; letter-spacing: -0.3px; }
+.section-header p { font-size: 15px; color: var(--text-muted); max-width: 520px; margin: 0 auto; line-height: 1.6; }
+
+.product-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(270px, 1fr)); gap: 24px; }
+.product-card { background: #fff; border-radius: var(--radius); overflow: hidden; box-shadow: 0 2px 16px rgba(44,36,22,0.05); transition: all 0.35s cubic-bezier(0.22,1,0.36,1); cursor: pointer; border: 1px solid transparent; position: relative; }
+.product-card::before { content: ''; position: absolute; inset: -1px; border-radius: var(--radius); border: 1.5px solid transparent; transition: all 0.35s; z-index: 1; pointer-events: none; }
+.product-card:hover::before { border-color: var(--gold); }
+.product-card:hover { transform: translateY(-6px); box-shadow: var(--shadow-lg); }
+.product-card .img-wrap { position: relative; padding-top: 70%; background: linear-gradient(135deg, #EDE5D8, #E5DCD0); overflow: hidden; display: flex; align-items: center; justify-content: center; }
+.product-card .img-wrap img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain; padding: 10px; transition: transform 0.5s cubic-bezier(0.22,1,0.36,1); }
+.product-card:hover .img-wrap img { transform: scale(1.08); }
+.product-card .img-overlay { position: absolute; inset: 0; background: rgba(44,36,22,0); display: flex; align-items: center; justify-content: center; transition: all 0.35s; z-index: 2; }
+.product-card:hover .img-overlay { background: rgba(44,36,22,0.12); }
+.product-card .img-overlay .view-btn { opacity: 0; transform: translateY(10px); transition: all 0.35s cubic-bezier(0.22,1,0.36,1); background: rgba(255,255,255,0.96); color: var(--brown-dark); padding: 10px 20px; border-radius: 24px; font-size: 13px; font-weight: 700; box-shadow: 0 4px 12px rgba(0,0,0,0.12); letter-spacing: 0.3px; }
+.product-card:hover .img-overlay .view-btn { opacity: 1; transform: translateY(0); }
+.product-card .info { padding: 18px; }
+.product-card .info .tag-row { display: flex; gap: 6px; margin-bottom: 8px; flex-wrap: wrap; }
+.product-card .info .tag { display: inline-block; padding: 3px 10px; border-radius: 10px; font-size: 11px; font-weight: 600; }
+.product-card .info .tag-main { background: var(--gold-pale); color: var(--gold); }
+.product-card .info .tag-video { background: rgba(74,124,89,0.1); color: var(--success); }
+.product-card .info .tag-aussie { background: rgba(192,120,26,0.1); color: #B86B00; }
+.product-card .info h3 { font-size: 15px; font-weight: 700; color: var(--brown-dark); margin-bottom: 6px; line-height: 1.4; }
+.product-card .info .desc { font-size: 13px; color: var(--text-muted); line-height: 1.55; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+.product-card .info .meta { display: flex; align-items: center; justify-content: space-between; margin-top: 14px; padding-top: 12px; border-top: 1px solid rgba(0,0,0,0.04); }
+.product-card .info .meta .cat { font-size: 12px; color: var(--text-muted); font-weight: 500; }
+.product-card .info .meta .btn-icon { width: 34px; height: 34px; border-radius: 50%; background: var(--gold-pale); color: var(--gold); display: flex; align-items: center; justify-content: center; font-size: 14px; transition: all 0.25s; }
+.product-card .info .meta .btn-icon:hover { background: var(--gold); color: #fff; transform: scale(1.1); }
+.cat-card .img-wrap { padding-top: 60%; background: linear-gradient(135deg, #F5E6C8, #EDE4D3); display: flex; align-items: center; justify-content: center; }
+.cat-card .img-wrap .cat-icon { font-size: 48px; transition: transform 0.4s cubic-bezier(0.22,1,0.36,1); }
+.cat-card:hover .img-wrap .cat-icon { transform: translateY(-8px) scale(1.1); }
+
+.modal-overlay { position: fixed; inset: 0; z-index: 2000; background: rgba(44,36,22,0.55); backdrop-filter: blur(8px); display: none; align-items: center; justify-content: center; padding: 16px; }
+.modal-overlay.active { display: flex; animation: fadeIn 0.25s ease-out; }
+.modal-content { background: #fff; border-radius: var(--radius); width: 100%; max-width: 860px; max-height: calc(100vh - 32px); overflow: hidden; display: flex; flex-direction: column; box-shadow: 0 24px 80px rgba(44,36,22,0.25); animation: fadeInScale 0.35s cubic-bezier(0.22,1,0.36,1); }
+.modal-header { display: flex; align-items: center; justify-content: space-between; padding: 18px 24px; border-bottom: 1px solid rgba(0,0,0,0.06); }
+.modal-header h3 { font-size: 18px; font-weight: 700; color: var(--brown-dark); }
+.modal-close { width: 38px; height: 38px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 18px; color: var(--text-muted); transition: all 0.2s; }
+.modal-close:hover { background: rgba(0,0,0,0.05); color: var(--text); transform: rotate(90deg); }
+.modal-body { overflow-y: auto; padding: 0; flex: 1; }
+.gallery-main { position: relative; background: linear-gradient(135deg, #EDE5D8, #E5DCD0); padding-top: 56%; overflow: hidden; }
+.gallery-main img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain; padding: 12px; transition: opacity 0.3s; }
+.gallery-thumbs { display: flex; gap: 10px; padding: 14px 20px; overflow-x: auto; background: #fff; border-bottom: 1px solid rgba(0,0,0,0.06); }
+.gallery-thumbs img { width: 68px; height: 68px; object-fit: cover; border-radius: var(--radius-sm); cursor: pointer; border: 2px solid transparent; transition: all 0.2s; opacity: 0.65; }
+.gallery-thumbs img.active, .gallery-thumbs img:hover { border-color: var(--gold); opacity: 1; }
+.video-area { margin: 20px 24px; border-radius: var(--radius); overflow: hidden; background: var(--brown-dark); position: relative; padding-top: 56%; }
+.video-area video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+.video-placeholder { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; flex-direction: column; gap: 10px; color: rgba(255,255,255,0.85); text-align: center; padding: 20px; }
+.video-placeholder .play-icon { width: 60px; height: 60px; border-radius: 50%; background: var(--gold); display: flex; align-items: center; justify-content: center; font-size: 22px; color: #fff; box-shadow: 0 6px 24px rgba(0,0,0,0.3); animation: pulse-gold 2s infinite; cursor: pointer; transition: transform 0.25s; }
+.video-placeholder .play-icon:hover { transform: scale(1.1); }
+.video-placeholder .video-note { font-size: 12px; color: rgba(255,255,255,0.5); }
+
+.detail-info { padding: 24px; }
+.detail-info h2 { font-size: 24px; font-weight: 800; color: var(--brown-dark); margin-bottom: 10px; }
+.detail-info .detail-tags { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 18px; }
+.detail-info .detail-tags span { padding: 5px 14px; border-radius: 14px; font-size: 12px; font-weight: 600; }
+.detail-info .detail-tags .tag-main { background: var(--gold-pale); color: var(--gold); }
+.detail-info .detail-tags .tag-sec { background: var(--cream); color: var(--text-light); border: 1px solid rgba(0,0,0,0.06); }
+.detail-info .detail-desc { font-size: 15px; color: var(--text-light); line-height: 1.75; margin-bottom: 24px; }
+.detail-specs { background: var(--cream); border-radius: var(--radius); padding: 20px; }
+.detail-specs h4 { font-size: 12px; font-weight: 700; color: var(--brown-dark); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 14px; }
+.detail-specs .spec-empty { font-size: 14px; color: var(--text-muted); font-style: italic; }
+.detail-actions { display: flex; gap: 14px; margin-top: 24px; }
+.detail-actions .btn { flex: 1; justify-content: center; }
+
+.contact-hero { background: linear-gradient(145deg, var(--brown-dark), var(--brown)); color: #fff; padding: 52px 24px 40px; text-align: center; }
+.contact-hero h2 { font-size: 30px; font-weight: 800; margin-bottom: 8px; letter-spacing: -0.3px; }
+.contact-hero p { color: rgba(255,255,255,0.7); font-size: 15px; }
+.franchise-banner { max-width: 720px; margin: 28px auto 0; padding: 16px 24px; border-radius: var(--radius); background: linear-gradient(90deg, rgba(232,168,56,0.2), rgba(192,120,26,0.15)); border: 1.5px solid rgba(232,168,56,0.3); display: flex; align-items: center; justify-content: center; gap: 10px; font-size: 15px; font-weight: 700; color: var(--gold-light); animation: float 3s ease-in-out infinite; }
+.contact-body { max-width: 720px; margin: 0 auto; padding: 40px 24px; }
+.contact-grid { display: grid; gap: 20px; margin-bottom: 40px; }
+.contact-card { background: #fff; border-radius: var(--radius); padding: 28px 24px; box-shadow: 0 2px 16px rgba(44,36,22,0.05); border: 1px solid rgba(0,0,0,0.04); text-align: center; transition: all 0.3s; }
+.contact-card:hover { transform: translateY(-3px); box-shadow: var(--shadow); }
+.contact-card .icon { width: 52px; height: 52px; border-radius: 50%; background: var(--gold-pale); color: var(--gold); display: flex; align-items: center; justify-content: center; font-size: 22px; margin: 0 auto 14px; transition: all 0.3s; }
+.contact-card:hover .icon { background: var(--gold); color: #fff; transform: scale(1.08); }
+.contact-card h4 { font-size: 16px; font-weight: 700; color: var(--brown-dark); margin-bottom: 6px; }
+.contact-card p { font-size: 13px; color: var(--text-muted); margin-bottom: 8px; }
+.contact-card a { font-size: 14px; color: var(--gold); font-weight: 600; word-break: break-all; transition: color 0.2s; }
+.contact-card a:hover { color: var(--gold-light); text-decoration: underline; }
+.contact-card .qr-placeholder { width: 150px; height: 150px; margin: 14px auto 0; border-radius: var(--radius-sm); background: var(--cream); border: 1.5px dashed rgba(0,0,0,0.1); display: flex; align-items: center; justify-content: center; flex-direction: column; gap: 6px; color: var(--text-muted); font-size: 12px; }
+
+.form-card { background: #fff; border-radius: var(--radius); padding: 28px; box-shadow: 0 2px 16px rgba(44,36,22,0.05); border: 1px solid rgba(0,0,0,0.04); }
+.form-card h3 { font-size: 20px; font-weight: 800; color: var(--brown-dark); margin-bottom: 4px; }
+.form-card .sub { font-size: 13px; color: var(--text-muted); margin-bottom: 24px; }
+.form-group { margin-bottom: 18px; }
+.form-group label { display: block; font-size: 13px; font-weight: 700; color: var(--brown-dark); margin-bottom: 6px; }
+.form-group label .required { color: #C4592A; }
+.form-group input, .form-group textarea, .form-group select { width: 100%; padding: 13px 16px; border-radius: var(--radius-sm); border: 1.5px solid rgba(0,0,0,0.08); font-size: 15px; background: #fff; color: var(--text); transition: all 0.2s; }
+.form-group input:focus, .form-group textarea:focus, .form-group select:focus { outline: none; border-color: var(--gold); box-shadow: 0 0 0 4px rgba(192,120,26,0.1); }
+.form-group textarea { min-height: 110px; resize: vertical; }
+.form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
+.form-hint { font-size: 12px; color: var(--text-muted); margin-top: 8px; line-height: 1.5; }
+.form-submit { width: 100%; padding: 15px; background: var(--gold); color: #fff; font-size: 16px; font-weight: 700; border-radius: var(--radius); cursor: pointer; transition: all 0.25s; box-shadow: 0 4px 20px rgba(192,120,26,0.25); display: flex; align-items: center; justify-content: center; gap: 8px; }
+.form-submit:hover { background: var(--gold-light); transform: translateY(-1px); box-shadow: var(--shadow-gold); }
+.form-submit:disabled { opacity: 0.55; cursor: not-allowed; transform: none; }
+.status-msg { display: none; padding: 14px 18px; border-radius: var(--radius-sm); font-size: 14px; margin-top: 18px; line-height: 1.5; }
+.status-msg.success { display: block; background: rgba(74,124,89,0.08); color: var(--success); border: 1.5px solid rgba(74,124,89,0.15); }
+.status-msg.error { display: block; background: rgba(196,89,42,0.08); color: #C4592A; border: 1.5px solid rgba(196,89,42,0.15); }
+.status-msg.offline { display: block; background: var(--cream); color: var(--text-muted); border: 1.5px solid rgba(0,0,0,0.08); }
+
+.cases-empty { display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 60vh; padding: 40px 24px; text-align: center; }
+.cases-empty .emoji { font-size: 64px; margin-bottom: 16px; opacity: 0.8; }
+.cases-empty h2 { font-size: 24px; font-weight: 700; color: var(--brown-dark); margin-bottom: 8px; }
+.cases-empty p { font-size: 15px; color: var(--text-muted); max-width: 400px; }
+
+.footer { background: var(--brown-dark); color: rgba(255,255,255,0.55); padding: 40px 24px 28px; }
+.footer-inner { max-width: 1200px; margin: 0 auto; display: grid; grid-template-columns: 1.5fr 1fr 1fr 1fr; gap: 40px; }
+.footer-brand .footer-logo { display: flex; align-items: center; gap: 10px; margin-bottom: 12px; }
+.footer-brand .footer-logo img { height: 34px; opacity: 0.95; }
+.footer-brand .footer-logo span { font-size: 18px; font-weight: 800; color: rgba(255,255,255,0.92); }
+.footer-brand p { font-size: 13px; line-height: 1.7; margin-bottom: 14px; }
+.footer-socials { display: flex; gap: 10px; }
+.footer-socials a { width: 38px; height: 38px; border-radius: 50%; background: rgba(255,255,255,0.08); display: flex; align-items: center; justify-content: center; font-size: 16px; color: rgba(255,255,255,0.7); transition: all 0.25s; }
+.footer-socials a:hover { background: var(--gold); color: #fff; transform: translateY(-2px); }
+.footer-col h4 { font-size: 13px; font-weight: 700; color: rgba(255,255,255,0.85); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 16px; }
+.footer-col ul li { margin-bottom: 10px; }
+.footer-col ul li a { font-size: 13px; color: rgba(255,255,255,0.5); transition: color 0.2s; }
+.footer-col ul li a:hover { color: var(--gold-light); }
+.footer-col .contact-item { display: flex; align-items: flex-start; gap: 10px; font-size: 13px; color: rgba(255,255,255,0.55); margin-bottom: 10px; line-height: 1.5; }
+.footer-col .contact-item .icon { font-size: 14px; margin-top: 2px; flex-shrink: 0; }
+.footer-bottom { text-align: center; padding-top: 24px; margin-top: 24px; border-top: 1px solid rgba(255,255,255,0.08); font-size: 12px; color: rgba(255,255,255,0.35); }
+
+.toast { position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%) translateY(100px); background: var(--brown-dark); color: #fff; padding: 14px 24px; border-radius: 30px; font-size: 14px; font-weight: 500; z-index: 3000; opacity: 0; transition: all 0.4s cubic-bezier(0.22,1,0.36,1); box-shadow: 0 6px 24px rgba(0,0,0,0.25); pointer-events: none; max-width: 90vw; text-align: center; }
+.toast.show { transform: translateX(-50%) translateY(0); opacity: 1; }
+
+@media (max-width: 768px) {
+  .menu-toggle { display: flex; }
+  .nav { display: none; position: absolute; top: 60px; right: 12px; left: 12px; background: #fff; border-radius: var(--radius); box-shadow: var(--shadow-lg); padding: 8px; flex-direction: column; gap: 2px; z-index: 999; border: 1px solid rgba(0,0,0,0.06); }
+  .nav.open { display: flex; }
+  .nav-btn { padding: 14px 16px; border-radius: var(--radius-sm); }
+  .nav-btn.active::after { display: none; }
+  .nav-btn.active { background: var(--gold-pale); }
+  .hero-carousel { height: auto; min-height: 520px; padding: 40px 0; }
+  .hero-carousel .slide-content { flex-direction: column-reverse; padding: 0 20px; gap: 24px; text-align: center; }
+  .hero-carousel .slide-text { flex: none; }
+  .hero-carousel .slide-visual { flex: none; height: 220px; width: 100%; }
+  .hero-carousel .slide h1 { font-size: 24px; }
+  .hero-carousel .slide .subtitle { font-size: 15px; }
+  .hero-carousel .slide p { font-size: 14px; }
+  .section { padding: 36px 20px; }
+  .product-grid { grid-template-columns: repeat(2, 1fr); gap: 14px; }
+  .product-card .info { padding: 14px; }
+  .product-card .info h3 { font-size: 13px; }
+  .product-card .info .desc { display: none; }
+  .modal-content { max-height: calc(100vh - 16px); border-radius: var(--radius-sm); }
+  .form-row { grid-template-columns: 1fr; }
+  .contact-grid { grid-template-columns: 1fr; }
+  .footer-inner { grid-template-columns: 1fr; gap: 28px; text-align: center; }
+  .footer-brand .footer-logo { justify-content: center; }
+  .footer-socials { justify-content: center; }
+  .footer-col .contact-item { justify-content: center; }
+  .detail-actions { flex-direction: column; }
+}
+@media (min-width: 769px) { .contact-grid { grid-template-columns: repeat(3, 1fr); } }
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: rgba(92,74,54,0.25); border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: rgba(92,74,54,0.4); }
+::selection { background: var(--gold-pale); color: var(--brown-dark); }
+</style>
+</head>
+<body>
+
+<header class="header">
+  <div class="header-inner">
+    <div class="logo" onclick="goPage('home')">
+      <img src="assets/LOGO.png" alt="Multi-Sweet Logo">
+      <div><div class="logo-text">Multi-Sweet</div><div class="logo-sub">Professional Beekeeping Equipment</div></div>
+    </div>
+    <button class="menu-toggle" onclick="toggleMenu()">☰</button>
+    <nav class="nav" id="nav">
+      <button class="nav-btn active" data-page="home" onclick="goPage('home')">首页</button>
+      <button class="nav-btn" data-page="products" onclick="goPage('products')">产品系列</button>
+      <button class="nav-btn" data-page="cases" onclick="goPage('cases')">客户案例</button>
+      <button class="nav-btn" data-page="contact" onclick="goPage('contact')">联系我们</button>
+    </nav>
+  </div>
+</header>
+
+<!-- ===== HOME ===== -->
+<section class="page active" id="page-home">
+  <div class="hero-carousel" id="hero-carousel">
+    <div class="slide active">
+      <div class="slide-content">
+        <div class="slide-text">
+          <div class="slide-badge">🔥 澳洲热销</div>
+          <h1>草酸蒸发器 <span class="accent">OAV-6</span></h1>
+          <div class="subtitle">瓦螨治理首选方案</div>
+          <p>安全高效 · 无药物残留 · 适用于有机蜂场<br>澳洲养蜂业应对 Varroa Mite 的核心工具</p>
+          <div class="slide-actions"><button class="btn btn-primary" onclick="openProduct(22)">了解详情</button><button class="btn btn-outline" onclick="goPage('contact')">获取报价</button></div>
+        </div>
+        <div class="slide-visual"><img src="assets/products/22-1.png" alt="草酸蒸发器 OAV-6"></div>
+      </div>
+    </div>
+    <div class="slide">
+      <div class="slide-content">
+        <div class="slide-text">
+          <div class="slide-badge">⚡ 热销</div>
+          <h1>电热刀 <span class="accent">澳式</span></h1>
+          <div class="subtitle">精准温控取蜜工具</div>
+          <p>澳式标准接口 · 高效蜂蜡切割<br>专业蜂场取蜜作业的必备利器</p>
+          <div class="slide-actions"><button class="btn btn-primary" onclick="openProduct(1)">了解详情</button><button class="btn btn-outline" onclick="goPage('products')">更多产品</button></div>
+        </div>
+        <div class="slide-visual"><img src="assets/products/1-1.png" alt="电热刀"></div>
+      </div>
+    </div>
+    <div class="slide">
+      <div class="slide-content">
+        <div class="slide-text">
+          <div class="slide-badge">🛡️ 热销</div>
+          <h1>加厚纯棉 <span class="accent">蜂服</span></h1>
+          <div class="subtitle">全方位防护</div>
+          <p>加厚纯棉 · 透气舒适 · 长时间作业无压力<br>为每一位蜂农的安全保驾护航</p>
+          <div class="slide-actions"><button class="btn btn-primary" onclick="openProduct(6)">了解详情</button><button class="btn btn-outline" onclick="goPage('products')">更多产品</button></div>
+        </div>
+        <div class="slide-visual"><img src="assets/products/6-1.png" alt="蜂服"></div>
+      </div>
+    </div>
+    <div class="slide">
+      <div class="slide-content">
+        <div class="slide-text">
+          <div class="slide-badge">📦 主推</div>
+          <h1>蓝黄色 <span class="accent">转运蜂箱</span></h1>
+          <div class="subtitle">高强度蜂群运输</div>
+          <p>便于转场管理 · 长途运输首选<br>专为蜂群转运设计的耐用蜂箱</p>
+          <div class="slide-actions"><button class="btn btn-primary" onclick="openProduct(3)">了解详情</button><button class="btn btn-outline" onclick="goPage('products')">更多产品</button></div>
+        </div>
+        <div class="slide-visual"><img src="assets/products/3-1.jpg" alt="转运蜂箱"></div>
+      </div>
+    </div>
+    <div class="dots" id="carousel-dots"><span class="active" onclick="goSlide(0)"></span><span onclick="goSlide(1)"></span><span onclick="goSlide(2)"></span><span onclick="goSlide(3)"></span></div>
+  </div>
+
+  <div class="section">
+    <div class="section-header animate-fade"><span class="badge">Featured</span><h2>澳洲市场主推</h2><p>精选适配澳洲蜂场需求的高品质产品</p></div>
+    <div class="product-grid" id="featured-grid"></div>
+  </div>
+
+  <div class="section" style="background: var(--cream-dark); border-radius: 24px 24px 0 0; margin-top: 24px;">
+    <div class="section-header animate-fade"><span class="badge">Categories</span><h2>产品分类</h2><p>涵盖蜂箱设备、取蜜工具、防护用品、智能控制等全品类</p></div>
+    <div class="product-grid" id="categories-grid" style="grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));"></div>
+  </div>
+</section>
+
+<!-- ===== PRODUCTS ===== -->
+<section class="page" id="page-products">
+  <div style="background: linear-gradient(145deg, var(--brown-dark), var(--brown)); padding: 40px 24px 32px; text-align: center; color: #fff;">
+    <h2 style="font-size: 28px; font-weight: 800; margin-bottom: 6px; letter-spacing: -0.3px;">全部产品系列</h2>
+    <p style="color: rgba(255,255,255,0.75); font-size: 14px;">点击产品卡片查看详情、多角度图片与视频演示</p>
+  </div>
+  <div class="section"><div class="product-grid" id="all-products-grid"></div></div>
+</section>
+
+<!-- ===== CASES ===== -->
+<section class="page" id="page-cases">
+  <div class="cases-empty"><div class="emoji">🌍</div><h2>客户案例 & 全球合作伙伴</h2><p>正在整理全球客户案例与合作伙伴故事，敬请期待。如需了解我们的客户分布，请联系销售团队。</p></div>
+</section>
+
+<!-- ===== CONTACT ===== -->
+<section class="page" id="page-contact">
+  <div class="contact-hero">
+    <h2>联系我们</h2><p>离线浏览产品，在线提交询盘。期待与您建立合作！</p>
+    <div class="franchise-banner"><span class="icon">🤝</span><span>全球地区经销代理火热招商中</span></div>
+  </div>
+  <div class="contact-body">
+    <div class="contact-grid">
+      <div class="contact-card"><div class="icon">📧</div><h4>邮箱</h4><p>发送询盘与产品资料</p><a href="mailto:info@multi-sweet.com">info@multi-sweet.com</a></div>
+      <div class="contact-card"><div class="icon">📱</div><h4>WhatsApp</h4><p>扫码添加，即时沟通</p><a href="#" onclick="showToast('WhatsApp 号码即将更新')">即将更新</a><div class="qr-placeholder"><span style="font-size:24px;">📲</span><span>WhatsApp 二维码</span><span style="font-size:11px;color:var(--text-muted);">待补充</span></div></div>
+      <div class="contact-card"><div class="icon">📞</div><h4>电话</h4><p>工作日 9:00–18:00</p><a href="#" onclick="showToast('联系电话即将更新')">即将更新</a></div>
+    </div>
+    <div class="form-card">
+      <h3>发送询盘</h3><p class="sub">填写下方信息，我们将在24小时内回复您</p>
+      <form id="inquiry-form" onsubmit="handleSubmit(event)">
+        <div class="form-row"><div class="form-group"><label>姓名 <span class="required">*</span></label><input type="text" name="name" placeholder="您的姓名" required></div><div class="form-group"><label>邮箱 <span class="required">*</span></label><input type="email" name="email" placeholder="example@company.com" required></div></div>
+        <div class="form-row"><div class="form-group"><label>公司 / 农场名</label><input type="text" name="company" placeholder="您的公司或农场名称"></div><div class="form-group"><label>所在地区 <span class="required">*</span></label><select name="region" required><option value="">请选择</option><option value="Australia">澳大利亚</option><option value="New Zealand">新西兰</option><option value="USA">美国</option><option value="Europe">欧洲</option><option value="Asia">亚洲</option><option value="Africa">非洲</option><option value="South America">南美</option><option value="Other">其他</option></select></div></div>
+        <div class="form-group"><label>感兴趣的产品</label><input type="text" name="interests" placeholder="如：草酸蒸发器、电热刀、蜂服等（可选填）"></div>
+        <div class="form-group"><label>留言内容</label><textarea name="message" placeholder="请描述您的需求、采购数量、代理意向或其他问题..."></textarea></div>
+        <button type="submit" class="form-submit" id="submit-btn">提交询盘 →</button>
+        <div class="form-hint" id="form-hint">💡 展会现场网络可能不稳定，表单会在有网络时自动提交，离线时也会本地保存。您也可以直接截图后通过邮件发送。</div>
+        <div class="status-msg" id="status-msg"></div>
+      </form>
+    </div>
+  </div>
+</section>
+
+<!-- Footer -->
+<footer class="footer">
+  <div class="footer-inner">
+    <div class="footer-brand">
+      <div class="footer-logo"><img src="assets/LOGO.png" alt="Multi-Sweet"><span>Multi-Sweet</span></div>
+      <p>22年专注蜂具研发与制造，为全球蜂农提供高品质养蜂工具与设备。</p>
+      <div class="footer-socials">
+        <a href="https://facebook.com" target="_blank" title="Facebook">f</a>
+        <a href="https://www.alibaba.com" target="_blank" title="Alibaba国际站">A</a>
+        <a href="#" onclick="goPage('contact'); return false;" title="联系我们">✉</a>
+      </div>
+    </div>
+    <div class="footer-col"><h4>导航</h4><ul><li><a href="#" onclick="goPage('home'); return false;">首页</a></li><li><a href="#" onclick="goPage('products'); return false;">产品系列</a></li><li><a href="#" onclick="goPage('cases'); return false;">客户案例</a></li><li><a href="#" onclick="goPage('contact'); return false;">联系</a></li></ul></div>
+    <div class="footer-col"><h4>产品</h4><ul><li><a href="#" onclick="filterCategory('蜂箱设备'); return false;">蜂箱设备</a></li><li><a href="#" onclick="filterCategory('取蜜工具'); return false;">取蜜工具</a></li><li><a href="#" onclick="filterCategory('防护用品'); return false;">防护用品</a></li><li><a href="#" onclick="filterCategory('智能设备'); return false;">智能设备</a></li></ul></div>
+    <div class="footer-col"><h4>联系方式</h4><div class="contact-item"><span class="icon">📧</span> info@multi-sweet.com</div><div class="contact-item"><span class="icon">🌐</span> <a href="https://www.alibaba.com" target="_blank" style="color:inherit;text-decoration:underline;">Alibaba 国际站</a></div><div class="contact-item"><span class="icon">📞</span> 电话即将更新</div><div class="contact-item"><span class="icon">📍</span> 中国 · 蜂具制造基地</div></div>
+  </div>
+  <div class="footer-bottom">© 2024 Multi-Sweet Group. All rights reserved. | Designed for Global Trade Shows & Roadshows</div>
+</footer>
+
+<!-- Modal -->
+<div class="modal-overlay" id="modal" onclick="closeModal(event)">
+  <div class="modal-content" onclick="event.stopPropagation()">
+    <div class="modal-header"><h3 id="modal-title">产品详情</h3><button class="modal-close" onclick="closeModal()">✕</button></div>
+    <div class="modal-body" id="modal-body"></div>
+  </div>
+</div>
+<div class="toast" id="toast"></div>
+
+<script src="products_data.js"></script>
+<script>
+const products = window.__PRODUCTS__ || [];
+const categories = window.__CATEGORIES__ || [];
+const slides = window.__SLIDES__ || [];
+
+function goPage(page) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.getElementById('page-' + page).classList.add('active');
+  document.querySelectorAll('.nav-btn').forEach(b => b.classList.toggle('active', b.dataset.page === page));
+  document.getElementById('nav').classList.remove('open');
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+function toggleMenu() { document.getElementById('nav').classList.toggle('open'); }
+
+function renderCard(p) {
+  const videoTag = p.video ? `<span class="tag tag-video">▶ 视频</span>` : '';
+  const aussieTag = p.tag === '澳洲热销' ? `<span class="tag tag-aussie">🇦🇺 ${p.tag}</span>` : (p.tag ? `<span class="tag tag-main">${p.tag}</span>` : '');
+  return `<div class="product-card animate-fade" onclick="openProduct(${p.id})"><div class="img-wrap"><img src="${p.img}" alt="${p.name}" loading="lazy"><div class="img-overlay"><span class="view-btn">查看详情</span></div></div><div class="info"><div class="tag-row">${aussieTag}${videoTag}</div><h3>${p.name}</h3><p class="desc">${p.desc}</p><div class="meta"><span class="cat">${p.category}</span><span class="btn-icon">→</span></div></div></div>`;
+}
+function renderCategory(c) {
+  return `<div class="product-card cat-card animate-fade" onclick="filterCategory('${c.name}')"><div class="img-wrap"><div class="cat-icon">${c.icon}</div></div><div class="info"><h3>${c.name}</h3><p class="desc">${c.desc}</p><div class="meta"><span class="cat">${c.count} 款产品</span><span class="btn-icon">→</span></div></div></div>`;
+}
+function init() {
+  const featured = products.filter(p => p.featured);
+  document.getElementById('featured-grid').innerHTML = featured.map(renderCard).join('');
+  document.getElementById('categories-grid').innerHTML = categories.map(renderCategory).join('');
+  document.getElementById('all-products-grid').innerHTML = products.map(renderCard).join('');
+  startCarouselDots();
+}
+function filterCategory(catName) {
+  goPage('products');
+  const filtered = products.filter(p => p.category === catName);
+  const grid = document.getElementById('all-products-grid');
+  const section = grid.parentElement;
+  const existing = section.querySelector('.filter-bar');
+  if (existing) existing.remove();
+  grid.innerHTML = filtered.length ? filtered.map(renderCard).join('') : `<div style="grid-column:1/-1;text-align:center;padding:40px;color:var(--text-muted);">该分类暂无产品</div>`;
+  section.insertAdjacentHTML('afterbegin', `<div class="filter-bar" style="margin-bottom:16px;display:flex;align-items:center;gap:10px;flex-wrap:wrap;"><span style="font-size:14px;color:var(--text-muted);">分类筛选：<strong style="color:var(--brown-dark);">${catName}</strong></span><button onclick="showAllProducts()" style="padding:5px 14px;border-radius:20px;background:var(--gold-pale);color:var(--gold);font-size:12px;font-weight:600;border:none;cursor:pointer;">显示全部</button></div>`);
+}
+function showAllProducts() {
+  const section = document.getElementById('all-products-grid').parentElement;
+  const bar = section.querySelector('.filter-bar');
+  if (bar) bar.remove();
+  document.getElementById('all-products-grid').innerHTML = products.map(renderCard).join('');
+}
+
+function openProduct(id) {
+  const p = products.find(x => x.id === id);
+  if (!p) return;
+  document.getElementById('modal-title').textContent = p.name;
+  const thumbs = p.images.map((img, i) => `<img src="${img}" class="${i===0?'active':''}" onclick="switchGallery(this, '${img}')">`).join('');
+  const videoBlock = p.video ? `<div class="video-area"><video controls poster="${p.img}"><source src="${p.video}" type="video/mp4"></video></div>` : `<div class="video-area"><div class="video-placeholder"><div class="play-icon">▶</div><span>产品视频演示</span><span class="video-note">视频正在准备中，敬请期待</span></div></div>`;
+  document.getElementById('modal-body').innerHTML = `<div class="gallery-main"><img src="${p.img}" alt="${p.name}" id="gallery-main-img"></div><div class="gallery-thumbs">${thumbs}</div>${videoBlock}<div class="detail-info"><h2>${p.name}</h2><div class="detail-tags"><span class="tag-main">${p.category}</span>${p.tag ? `<span class="tag-sec">${p.tag}</span>` : ''}<span class="tag-sec">ID: ${String(p.id).padStart(3,'0')}</span></div><p class="detail-desc">${p.desc}</p><div class="detail-specs"><h4>产品参数</h4><p class="spec-empty">详细参数表正在整理中，如需了解具体规格，请通过询盘或邮件联系我们。</p></div><div class="detail-actions"><button class="btn btn-primary" onclick="inquiryProduct('${p.name}')">询盘此产品</button><button class="btn btn-outline" style="color:var(--text-light);border-color:rgba(0,0,0,0.12);" onclick="closeModal()">继续浏览</button></div></div>`;
+  document.getElementById('modal').classList.add('active');
+  document.body.style.overflow = 'hidden';
+}
+function switchGallery(thumb, src) { document.getElementById('gallery-main-img').src = src; document.querySelectorAll('.gallery-thumbs img').forEach(img => img.classList.remove('active')); thumb.classList.add('active'); }
+function closeModal(e) { if (e && e.target !== e.currentTarget) return; document.getElementById('modal').classList.remove('active'); document.body.style.overflow = ''; }
+function inquiryProduct(name) { closeModal(); goPage('contact'); const interests = document.querySelector('#inquiry-form [name="interests"]'); if (interests) { interests.value = name; interests.focus(); } showToast('已为您填写产品名称，请补充信息提交询盘'); }
+
+function handleSubmit(e) {
+  e.preventDefault();
+  const btn = document.getElementById('submit-btn');
+  const status = document.getElementById('status-msg');
+  const form = e.target;
+  const data = Object.fromEntries(new FormData(form).entries());
+  const now = new Date().toISOString();
+  let stored = JSON.parse(localStorage.getItem('multi_sweet_inquiries') || '[]');
+  stored.push({ ...data, time: now, synced: false });
+  localStorage.setItem('multi_sweet_inquiries', JSON.stringify(stored));
+  if (!navigator.onLine) {
+    status.className = 'status-msg offline';
+    status.innerHTML = '⚠️ 当前处于离线状态。您的询盘已<strong>本地保存</strong>。请截图保存以下信息，或通过邮件发送：info@multi-sweet.com';
+    showToast('离线模式：询盘已本地保存');
+    return;
+  }
+  btn.disabled = true; btn.textContent = '提交中...';
+  status.className = 'status-msg'; status.style.display = 'none';
+  setTimeout(() => {
+    btn.disabled = false; btn.textContent = '提交询盘 →';
+    status.className = 'status-msg success';
+    status.innerHTML = '✅ 询盘提交成功！<br>同时已本地备份。我们将在24小时内通过邮件回复您。';
+    form.reset();
+    showToast('询盘提交成功！');
+  }, 1200);
+}
+
+function showToast(msg) { const toast = document.getElementById('toast'); toast.textContent = msg; toast.classList.add('show'); setTimeout(() => toast.classList.remove('show'), 3200); }
+window.addEventListener('online', () => showToast('已连接网络，可提交询盘'));
+window.addEventListener('offline', () => showToast('已切换到离线模式，可继续浏览产品'));
+document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
+
+/* ===== Carousel ===== */
+let carouselIdx = 0;
+let carouselTimer = null;
+function goSlide(idx) {
+  if (carouselTimer) clearInterval(carouselTimer);
+  const slides = document.querySelectorAll('.hero-carousel .slide');
+  const dots = document.querySelectorAll('#carousel-dots span');
+  slides.forEach((s, i) => s.classList.toggle('active', i === idx));
+  dots.forEach((d, i) => d.classList.toggle('active', i === idx));
+  carouselIdx = idx;
+  startCarouselAuto();
+}
+function startCarouselAuto() {
+  if (carouselTimer) clearInterval(carouselTimer);
+  carouselTimer = setInterval(() => {
+    const slides = document.querySelectorAll('.hero-carousel .slide');
+    const dots = document.querySelectorAll('#carousel-dots span');
+    const next = (carouselIdx + 1) % slides.length;
+    slides.forEach((s, i) => s.classList.toggle('active', i === next));
+    dots.forEach((d, i) => d.classList.toggle('active', i === next));
+    carouselIdx = next;
+  }, 5000);
+}
+
+init();
+startCarouselAuto();
+</script>
+
+</body>
+</html>
